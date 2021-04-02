@@ -17,7 +17,7 @@ int compar(struct book *b1, struct book *b2);
 
 void get(char name[]);
 void insert(struct book new);
-void delete (char name[]);
+void delete(char name[]);
 void deleteOne(int i);
 
 /*
@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
         switch (op)
         {
         case 0:
-        {//这个大括号，是刚刚查到的冷知识：如果在case里面想要定义一个新的变量，就需要加上一个大括号
+        { //这个大括号，是刚刚查到的冷知识：如果在case里面想要定义一个新的变量，就需要加上一个大括号
             //保存并退出
             FILE *foutp = fopen("ordered.txt", "w");
             //TODO 等等写 /* fputs函数或fprintf函数 */
@@ -83,7 +83,7 @@ int main(int argc, char const *argv[])
             break;
         case 3: //删除
             scanf("%s", name);
-            delete (name);
+            delete(name);
             break;
         default:
             break;
@@ -105,6 +105,10 @@ void insert(struct book new)
     while (strlen(bookbank[i].name) != 0)
     {
         if (strcmp(new.name, bookbank[i].name) > 0)
+        {
+            i++;
+        }
+        else
         {
             break;
         }
@@ -132,7 +136,7 @@ void get(char name[])
     }
 }
 //删除操作，可优化的点：数组在删除多个元素的时候，后面的一个元素会移动多次，可以全部标记，然后一次性删除并移动
-void delete (char name[])
+void delete(char name[])
 {
     int i;
     for (i = 0; i < bookbanksize; i++)
@@ -140,8 +144,8 @@ void delete (char name[])
         if (strstr(bookbank[i].name, name) != NULL)
         {
             deleteOne(i);
+            i--; //回退到前面一个，不然会少判断紧跟着的元素
         }
-        i--; //回退到前面一个，不然会少判断紧跟着的元素
     }
 }
 void deleteOne(int i)

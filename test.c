@@ -6,6 +6,11 @@
 
 int main(int argc, char const *argv[])
 {
-    char a = '\0';
+    char a = ' ';
+    if (a)
+    {
+        printf("fu");
+    }
+    
     printf("%d", isblank(a));
 }

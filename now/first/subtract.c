@@ -3,36 +3,49 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+/* 去除字符串前无意义的0，若为全0，只保留一个0 */
+char *trim(char *a);
+/* 翻转字符串s */
+void reverse(char *s);
+/* 大数减法，c=a-b */
+void bigminus(char *a, char *b, char *c);
+/* 字符串数字的比较，a大返回正数，b大返回负数，相等返回0 */
+int compare(char *a, char *b);
 
 int main(int argc, char const *argv[])
 {
-    char a[85], b[85];
+    char a[85], b[85], *as, *bs, *tp, c[85] = {0}, i;
     gets(a);
     gets(b);
-    char *as, *bs;
-    as = trim(a);//去除前面无意义的0，用指针节约了一下数组复制的复杂度（然而并不重要）
+    as = trim(a); //去除前面无意义的0，用指针节约了一下数组复制的复杂度（然而并不重要）
     bs = trim(b);
-    reverse(as);
-    reverse(bs);
-
-    if (as == 0 && bs == 0)
-    {
-        printf("0");
-        return;
-    }
-    else if (as == 0)
+    if (compare(a, b) < 0)
     {
         printf("-");
-        puts(bs);
-    }
-    else if (bs == 0)
-    {
-        puts(as);
+        tp = as;
+        as = bs;
+        bs = tp;
     }
 
-    char c[85] = {0};
-    bigminus(a, b, c);
+    reverse(as);
+    reverse(bs);
+    bigminus(as, bs, c); // c = a - b;
+    reverse(c);
+    trim(c);
+    for (i = 0; i < strlen(c); i++)
+    {
+        printf("%d", c[i]);
+    }
+
     return 0;
+}
+int compare(char *a, char *b)
+{
+    if (strlen(a) != strlen(b))
+    {
+        return strlen(a) - strlen(b);
+    }
+    return strcmp(a, b);
 }
 void reverse(char *s)
 {
@@ -47,36 +60,20 @@ void reverse(char *s)
         l--;
     }
 }
-void bigminus(char *a, char *b, char *c) //注意这里的c不是真正的字符数组了，只是当一个小整数数组在用
+void bigminus(char *a, char *b, char *c)
 {
-    int pos = 1;
-    char *as = a, *bs = b, *cs = c, cur;
-    while (*a++ != '\0')
-        ;   //a处于\0之后
-    a -= 2; //a处于\0之前
-    while (*b++ != '\0')
-        ;
-    b -= 2;
-    //这时候我发现，reverse函数是必须的，因为c必然是倒着的
-    while (a <= as && b <= bs) //直到越界
+    /* as现在一定比bs大 */
+    int i;
+    for (i = 0; i < strlen(a); i++)
     {
-        cur = *a - *b;
-        if (cur < 0)
+        c[i] = a[i] - b[i] + '0';
+        if (!c[i]) //如果ci小于0，借位+10
         {
-            //需要借位
-            (*(a - 1))--;
-            cur += 10;
+            a[i + 1]--;
+            c[i] += 10;
         }
-        *c = cur;
-        //移动
-        c++;
-        a--;
-        b--;
     }
-    if (/* condition */)
-    {
-        /* code */
-    }
+    c[i] = '\0';
 }
 
 char *trim(char *a)
@@ -89,5 +86,5 @@ char *trim(char *a)
         }
         a++;
     }
-    return 0;
+    return *(a - 1);
 }

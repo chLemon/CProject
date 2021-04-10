@@ -19,7 +19,7 @@
             "problemMatcher": "$msCompile"
         },{
             "label": "gcc",
-            "command": "g++",
+            "command": "gcc",
             "args": [
                 "-g",
                 "${file}",

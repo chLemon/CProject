@@ -84,7 +84,7 @@ int main()
 	return 0;
 }
 
-void push(char ch)
+void push(char ch) //只有一行不要用函数，用#define 下面也是
 {
 	stc[++top] = ch;
 }

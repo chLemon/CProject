@@ -4,37 +4,32 @@
 #include <math.h>
 #include <stdlib.h>
 
-void removeblank(char *s);
-
 int main(int argc, char const *argv[])
 {
-    //处理输入
-    char input[500];
-    gets(input);
-    removeblank(input);
-    puts(input);
+    int a1, a2, a3;
+    char op1, op2, op3;
+    //为了保证计算顺序，在最开始加上一个0+
+    a1 = 0;
+    op1 = '+';
+    while (op1 != '=')
+    {
+        scanf("%d %c", &a2, &op2);
+        //一口气把乘除计算完毕
+        while (op2 == '*' || op2 == '/')
+        {
+            scanf("%d %c", &a3, &op3);
+            if (op2 == '*')
+                a2 *= a3;
+            else if (op2 == '/')
+                a2 /= a3;
+            op2 = op3;
+        }
+        if (op1 == '+')
+            a1 += a2;
+        else if (op1 == '-')
+            a1 -= a2;
+        op1 = op2;
+    }
+    printf("%d", a1);
     return 0;
-}
-
-void removeblank(char *s)
-{
-    char *p1 = s, *p2;
-    while (!isblank(*p1))
-        p1++;
-    if (*p1)
-        return;
-    //p1现在是第一个出现的空格
-    
-    p2 = p1 + 1;
-    while (p2 == ' ')
-    {
-        p2++;
-    }
-    //p2是之后第一个不是空格的，p1是空格
-    while (*p2 != '\0')
-    {
-        if
-    }
-
-    *p2 = '\0';
 }

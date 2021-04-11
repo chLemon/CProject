@@ -1,127 +1,130 @@
-#include<stdio.h>
-#include<math.h>
-#include<string.h>
-#include<stdlib.h>
-#include<ctype.h>
-#define MAX (500+5)
-#define N (100+5)
-char pri[N][N];
-int num[N];
-char opr[N];
-int t=-1,top2=-1;
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define N (100 + 5)
+
+int stacknum[N];
+char stackopr[N];
+int numtop = -1, oprtop = -1;
 
 int getpriority(char ch)
 {
-	if(ch=='+'||ch=='-')return 1;
-	else if(ch=='*'||ch=='/')return 2;
-	else if(ch=='(')return 3;
-} 
+	if (ch == '+' || ch == '-')
+		return 1;
+	else if (ch == '*' || ch == '/')
+		return 2;
+	else if (ch == '(')
+		return 3;
+}
 
 void compr(op)
 {
-	if(top2==-1)
+	if (oprtop == -1)
 	{
-		opr[++top2]=op;
+		stackopr[++oprtop] = op;
 	}
-	else if(op==')')
+	else if (op == ')')
 	{
-		while(opr[top2]!='(')
+		while (stackopr[oprtop] != '(')
 		{
-			switch(opr[top2])
+			switch (stackopr[oprtop])
 			{
-				case '+':
-				num[t-1]=num[t]+num[t-1];
+			case '+':
+				stacknum[numtop - 1] = stacknum[numtop] + stacknum[numtop - 1];
 				break;
-				case '-':
-				num[t-1]=num[t]-num[t-1];
+			case '-':
+				stacknum[numtop - 1] = stacknum[numtop] - stacknum[numtop - 1];
 				break;
-				case '*':
-				num[t-1]=num[t]*num[t-1];
+			case '*':
+				stacknum[numtop - 1] = stacknum[numtop] * stacknum[numtop - 1];
 				break;
-				case '/':
-				num[t-1]=num[t]/num[t-1];
+			case '/':
+				stacknum[numtop - 1] = stacknum[numtop] / stacknum[numtop - 1];
 				break;
-				case '%':
-				num[t-1]=num[t]%num[t-1];
-				break;	
+			case '%':
+				stacknum[numtop - 1] = stacknum[numtop] % stacknum[numtop - 1];
+				break;
 			}
-			t--;
-			top2--;
+			numtop--;
+			oprtop--;
 		}
-		top2--;
+		oprtop--;
 	}
-	else if(op=='=')
+	else if (op == '=')
 	{
-		while(t!=0)
+		while (numtop != 0)    //这里判断错了，t和t2的命名就很难看出来
 		{
-			switch(opr[top2])
-				{
-					case '+':
-					num[t-1]=num[t]+num[t-1];
-					break;
-					case '-':
-					num[t-1]=num[t]-num[t-1];
-					break;
-					case '*':
-					num[t-1]=num[t]*num[t-1];
-					break;
-					case '/':
-					num[t-1]=num[t]/num[t-1];
-					break;
-					case '%':
-					num[t-1]=num[t]%num[t-1];
-					break;	
-				}
-				t--;
-			top2--;
+			switch (stackopr[oprtop])
+			{
+			case '+':
+				stacknum[numtop - 1] = stacknum[numtop] + stacknum[numtop - 1];
+				break;
+			case '-':
+				stacknum[numtop - 1] = stacknum[numtop] - stacknum[numtop - 1];
+				break;
+			case '*':
+				stacknum[numtop - 1] = stacknum[numtop] * stacknum[numtop - 1];
+				break;
+			case '/':
+				stacknum[numtop - 1] = stacknum[numtop] / stacknum[numtop - 1];
+				break;
+			case '%':
+				stacknum[numtop - 1] = stacknum[numtop] % stacknum[numtop - 1];
+				break;
+			}
+			numtop--;
+			oprtop--;
 		}
 	}
 	else
 	{
-		while(getpriority(opr[top2])>=getpriority(op)&&opr[top2]!='(')
+		while (getpriority(stackopr[oprtop]) >= getpriority(op) && stackopr[oprtop] != '(') 
 		{
-			switch(opr[top2])
-				{
-					case '+':
-					num[t-1]=num[t]+num[t-1];
-					break;
-					case '-':
-					num[t-1]=num[t]-num[t-1];
-					break;
-					case '*':
-					num[t-1]=num[t]*num[t-1];
-					break;
-					case '/':
-					num[t-1]=num[t]/num[t-1];
-					break;
-					case '%':
-					num[t-1]=num[t]%num[t-1];
-					break;	
-				}
-				t--;
-			top2--;
+			switch (stackopr[oprtop])
+			{
+			case '+':
+				stacknum[numtop - 1] = stacknum[numtop] + stacknum[numtop - 1];
+				break;
+			case '-':
+				stacknum[numtop - 1] = stacknum[numtop] - stacknum[numtop - 1];  //顺序反了
+				break;
+			case '*':
+				stacknum[numtop - 1] = stacknum[numtop] * stacknum[numtop - 1];
+				break;
+			case '/':
+				stacknum[numtop - 1] = stacknum[numtop] / stacknum[numtop - 1];   //顺序反了
+				break;
+			case '%':
+				stacknum[numtop - 1] = stacknum[numtop] % stacknum[numtop - 1];    //顺序反了
+				break;
+			}
+			numtop--;
+			oprtop--;
+			//这样while 是不是会while到stackopr的0位置'\0'，那这个的优先级怎么判断
 		}
-		opr[++top2]=op;
+		stackopr[++oprtop] = op;
 	}
 }
 
-void compute()
+void compute() //这个函数希望达成的效果是：计算表达式，将最终结果放在stacknum的0位置
 {
-	opr[++top2]='\0';
+	stackopr[++oprtop] = '\0'; //这里需要修改，应该推=入栈
 	char op;
 	int w;
-	while(scanf("%c",&op)!=EOF)
+	while(scanf("%c",&op)!=EOF)    
 	{
-		if(isdigit(op))
+		if(isdigit(op)) 
 		{
-			w=op-'0';
-			while(scanf("%c",&op)!=EOF&&isdigit(op))
+			w=op-'0';  
+			while(scanf("%c",&op)!=EOF&&isdigit(op))  
 			{
-				w=w*10+(op-'0');
-			}
-			t++;
-			num[t]=w;
-			compr(op);
+				w=w*10+(op-'0');       
+			}                
+			stacknum[++numtop]=w;           
+			compr(op);             
 		}
 		else
 		{
@@ -130,12 +133,13 @@ void compute()
 	}
 }
 
-int main ()
+int main()
 {
+	/* 输入输出应该在main里面处理 */
 	compute();
-	
+
 	int ans;
-	ans=num[0];
-	printf("%d",ans);
+	ans = stacknum[0];
+	printf("%d", ans);
 	return 0;
 }

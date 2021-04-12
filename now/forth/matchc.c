@@ -4,43 +4,48 @@
 #include <math.h>
 #include <stdlib.h>
 
-/* 
-思路：一行行的读取C语言文件，然后通过栈来进行括号匹配。（括号匹配思路略）
- */
+#define isempty() top == -1
+#define isfull() top == 205
+//定义一个结构体，包含2个成员，一个是括号，一个是行号
+typedef struct node
+{
+    char brc;
+    int lineindex;
+} node;
 
-//TIP:题目中要求打印出不匹配的括号及其行号，那么在栈里除了存括号本身以外，最好还能存一下行号。
-//TODO:定义一个结构体，包含2个成员，一个是括号，一个是行号
+node stc[205];
+node all[205];
 
-//TIP：括号匹配需要用栈来实现
-//TODO:通过数组定义一个栈，根据题目要求合理设置栈的大小（包括栈数组本身和top）
+int top = -1;
 
-//TODO：写push和pop函数，在push和pop函数中加入非法情况的判断（栈满和栈空），约定： int push(Element e)，当成功插入时返回0，当出现异常时返回-1； Element pop()，当成功弹出时，返回出栈的字符，否则返回-1
+int push(node e)
+{
+    if (top == 205)
+        return -1;
+    stc[top++] = e;
+    return 0;
+}
 
-//TODO:通过#define实现 isempty()和isfull()
-
-//TIP：在括号正确的时候我们还需要输出全部的括号，准备一个数组用来存放遇到的所有括号（这里其实是一个队列）
-//TODO：定义一个队列存放全部的括号
+node pop()
+{
+    if (top == -1)
+    {
+        node n = {-1, -1};
+        return n;
+    }
+    return stc[top--];
+}
 
 int main(int argc, char const *argv[])
 {
-    /* 
-    代码思路：一行行地读入：
-    当出现 字符常量、字符串常量、注释时，进行标记，对其中的括号不做任何操作。
-    基本：当出现左括号时入栈，右括号时进行栈顶判断并出栈
-    附加：题目要求的3个规则
-     */
-
     FILE *fp;
     fp = fopen("example.txt", "r");
-    int lineindex = 1; //行号
-    char line[205];    //每行的内容，每次存一行就行了，不需要全部都存下来，空间复杂度
-    int jump = 0;      //下面解释
+    int lineindex = 1;
+    char line[205];
+    int jump = 0;
     int i;
-    while ((line = fgets(fp)) != EOF)
+    while (fgets(fp, 205, line) != NULL)
     {
-        //遍历line
-        //如果出现了字符常量，字符串常量，注释时，将jump设置为1         思考：一共包含4种情况，怎么判断是这几种情况，jump什么时候又要重置为0？ 如果jump一个标记不够，可以再增加几个变量作为标记
-        //当jump为0时，代表是代码正文，进行括号的入栈、判断、出栈操作，为1则跳过
         for (i = 0; i < strlen(line); i++)
         {
             char cur = line[i]; //当前字符

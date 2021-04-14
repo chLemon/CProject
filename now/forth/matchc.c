@@ -6,8 +6,8 @@
 
 #define isempty() top == -1
 #define isfull() top == 205
-#define isbrc(c) c == '(' || c == '}' || c == '{' || c == '}'
-#define printe(c, i) printf("without maching %c at line %d", c, i);return 0;
+#define isbrc(c) c == '(' || c == ')' || c == '{' || c == '}'
+#define printe(c, i) printf("without maching %c at line %d", c, i);
 
 char all[205];
 int ia = -1;
@@ -23,7 +23,7 @@ int push(node e)
 {
     if (top == 205)
         return -1;
-    stc[top++] = e;
+    stc[++top] = e;
     return 0;
 }
 node pop()
@@ -41,12 +41,12 @@ int main(int argc, char const *argv[])
 {
     //打开文件
     FILE *fp;
-    fp = fopen("example.txt", "r");
-    int lineindex = 0;
+    fp = fopen("example.c", "r"); //注意：open后必须close
     char line[205];
+    int lineindex = 0;
     int jump = 0;
     int i;
-    while (fgets(fp, 205, line) != NULL)
+    while (fgets(line, 205, fp) != NULL)
     {
         //读取每一行，对每一行做操作
         lineindex++;
@@ -76,19 +76,22 @@ int main(int argc, char const *argv[])
                         if (stc[top].brc == '(')
                         {
                             printe('(', stc[top].lineindex);
+                            fclose(fp);
+                            return 0;
                         }
                         node e = {'{', lineindex};
                         push(e);
+                        break;
                     }
-                    break;
                     case ')':
                     {
                         node n = pop();
                         if (n.brc != '(')
                         {
-                            printe(')',lineindex);
+                            printe(')', lineindex);
+                            fclose(fp);
+                            return 0;
                         }
-
                         break;
                     }
                     case '}':
@@ -96,7 +99,9 @@ int main(int argc, char const *argv[])
                         node n = pop();
                         if (n.brc != '{')
                         {
-                            printe('}',lineindex);
+                            printe('}', lineindex);
+                            fclose(fp);
+                            return 0;
                         }
                         break;
                     }
@@ -112,8 +117,8 @@ int main(int argc, char const *argv[])
         for (i = 0; i < strlen(all); i++)
             printf("%c", all[i]);
     else
-        printe(stc[0].brc,stc[0].lineindex);
-
+        printe(stc[0].brc, stc[0].lineindex);
+    fclose(fp);
     return 0;
 }
 
@@ -151,8 +156,7 @@ int jumpchange(int jump, char pre, char cur)
                 return jump;
             if ((jump == 2 && cur == '"') || (jump == 4 && pre == '*' && cur == '/')) // 2和4可能改变
                 return 0;
-            return jump; //写这种长的if-else的时候一定要注意，每一种情况都要有一个返回值
         }
-        return jump;
     }
+    return jump; //写这种长的if-else的时候一定要注意，每一种情况都要有一个返回值
 }

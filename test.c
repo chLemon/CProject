@@ -3,48 +3,89 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#define isempty() top == -1
+#define isfull() top == 205
+#define isbrc(c) c == '(' || c == '}' || c == '{' || c == '}'
+#define printe(c, i) printf("without maching %c at line %d", c, i);
+
+char all[205];
+int ia = -1;
+//定义一个结构体，包含2个成员，一个是括号，一个是行号
+typedef struct node
+{
+    char brc;
+    int lineindex;
+} node;
+node stc[205];
+int top = -1;
+int push(node e)
+{
+    if (top == 205)
+        return -1;
+    stc[++top] = e;
+    return 0;
+}
+node pop()
+{
+    if (top == -1)
+    {
+        node n = {-1, -1};
+        return n;
+    }
+    return stc[top--];
+}
 
 int main(int argc, char const *argv[])
 {
+    char cur = ')';
+    int lineindex = 0;
+    if (isbrc(cur))
+    {
+        all[++ia] = cur;
+        switch (cur)
+        {
+        case '(':
+        {
+            node e = {'(', lineindex};
+            push(e);
+            break;
+        }
+        case '{':
+        {
+            if (stc[top].brc == '(')
+            {
+                printe('(', stc[top].lineindex);
+                return 0;
+            }
+            node e = {'{', lineindex};
+            push(e);
+            break;
+        }
+        case ')':
+        {
+            printf("======%d", top);
+            node n = pop();
+            if (n.brc != '(')
+            {
+                printe(')', lineindex);
+                return 0;
+            }
+            break;
+        }
+        case '}':
+        {
+            node n = pop();
+            if (n.brc != '{')
+            {
+                printe('}', lineindex);
+                return 0;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
 
     return 0;
 }
-
-int f(char s[])
-{
-    int i = 0, j = 0;
-    while (s[j]) // 一般默认的'\0'的值为0，这句话可以理解为s[j]不为'\0'时
-    {
-        j++;
-    }
-    for (j--; i < j && s[i] == s[j]; i++, j--) //从这里可以看出来，循环开始时i和j应该分别指向字符串的首尾。所以上面是j++
-        ;//如果相等就什么都不做，那么如果对称，i>=j
-    return i >= j;
-}
-
-
-左边是栈顶
-S(1)        栈内元素：1
-X()         1出栈，        栈内元素：
-S(2)        栈内元素：2
-S(3)        栈内元素：3 2
-X()         3出栈          栈内元素：2
-S(4)        站内元素：4 2
-X()         4出栈           栈内元素2
-X()         2出栈
-
-
-3+x*(2.4/5-6)
-//先写最外面的加号
-3(x*(2.4/5-6))+
-//染后写x*...
-3(x(2.4/5-6)*)+
-//然后是里面的除法
-3(x(2.4,5/-6)*)+
-//然后是里面的减法
-3(x(2.4,5/6-)*)+
-
-//最后去掉所有括号
-3 x 2.4 5 / 6 - * +
-
-3,x,2.4,5,/,6,-,*,+

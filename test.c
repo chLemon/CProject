@@ -25,8 +25,10 @@ int main()
     pp = fopen("in_crpyt.txt", "w");
 
     char ch;
-    while ((ch = fgetc(fp)) != NULL)
+
+    while ((ch = fgetc(fp)) != EOF)
     {
+        printf("%c", ch);
         if (ch >= 32 || ch <= 126)
             fputc(pas[ch], pp);
         else
@@ -40,16 +42,19 @@ int main()
 
 void add()
 {
-    struct node *p, *list;
+    struct node *p, *list, *pre, *q;
     p = (struct node *)malloc(sizeof(struct node));
-    list = p = NULL;
-    int n = 0;
+    p->next = NULL;
+    list = p;
     char op;
-    while (op = getchar() != EOF)
+    while ((op = getchar()) != '\n')
     {
         if (flag[op] == 0)
         {
-            p->next->word = op;
+            q = (struct node *)malloc(sizeof(struct node));
+            q->word = op;
+            q->next = NULL;
+            p->next = q;
             p = p->next;
             flag[op] = 1;
         }
@@ -61,24 +66,30 @@ void add()
         op = i;
         if (flag[i] == 0)
         {
-            p->next->word = op;
+            q = (struct node *)malloc(sizeof(struct node));
+            q->word = op;
+            q->next = NULL;
+            p->next = q;
             p = p->next;
         }
     }
-    p->next = list;
+    p->next = list->next;
 
-    struct node *q;
-    q = (struct node *)malloc(sizeof(struct node));
-    int m = list->word;
-    for (p = list->next; p != p->next; p = p->next)
+    pre = p;
+    list = list->next;
+    int m, h;
+    h = list->word;
+    for (p = list; p != p->next;)
     {
-        q = p;
-        for (i = 0; i < p->word; i++)
+        m = p->word;
+        pre->next = p->next;
+        p = p->next;
+        for (i = 0; i < m - 1; i++)
         {
+            pre = pre->next;
             p = p->next;
         }
-        pas[q->word] = p->word;
-        free(q);
+        pas[m] = p->word;
     }
-    pas[m] = p->word;
+    pas[p->word] = h;
 }

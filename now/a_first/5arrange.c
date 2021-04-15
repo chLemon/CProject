@@ -4,6 +4,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+/* 静静提交的代码上输入10，有误 */
+
 int arr[11];
 int res[11];
 int N;

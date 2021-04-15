@@ -1,37 +1,84 @@
 #include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define MAX (500 + 5)
+#define N (200 + 5)
+int flag[200];
+char pas[200];
 
-char p[21];
-int mark[10] = {0};
-int N;
-void rearrange(int m, int n);
+struct node
+{
+    char word;
+    struct node *next;
+};
+
+void add();
 
 int main()
 {
-    scanf("%d", &N);
-    rearrange(0, N);
+    add();
+
+    FILE *fp, *pp;
+    fp = fopen("in.txt", "r");
+    pp = fopen("in_crpyt.txt", "w");
+
+    char ch;
+    while ((ch = fgetc(fp)) != NULL)
+    {
+        if (ch >= 32 || ch <= 126)
+            fputc(pas[ch], pp);
+        else
+            fputc(ch, pp);
+    }
+
+    fclose(fp);
+    fclose(pp);
     return 0;
 }
 
-void rearrange(int m, int n)
+void add()
 {
-    int i;
-
-    if (n == 0)
+    struct node *p, *list;
+    p = (struct node *)malloc(sizeof(struct node));
+    list = p = NULL;
+    int n = 0;
+    char op;
+    while (op = getchar() != EOF)
     {
-        p[m] = '\0';
-        puts(p);
-        return;
-    }
-
-    for (i = 1; i <= N; i++)
-    {
-        if (mark[i] == 0)
+        if (flag[op] == 0)
         {
-            mark[i] = 1;
-            p[m] = '0' + i;
-            p[m + 1] = ' ';
-            rearrange(m + 2, n - 1);
-            mark[i] = 0;
+            p->next->word = op;
+            p = p->next;
+            flag[op] = 1;
         }
     }
+
+    int i = 0;
+    for (i = 32; i <= 126; i++)
+    {
+        op = i;
+        if (flag[i] == 0)
+        {
+            p->next->word = op;
+            p = p->next;
+        }
+    }
+    p->next = list;
+
+    struct node *q;
+    q = (struct node *)malloc(sizeof(struct node));
+    int m = list->word;
+    for (p = list->next; p != p->next; p = p->next)
+    {
+        q = p;
+        for (i = 0; i < p->word; i++)
+        {
+            p = p->next;
+        }
+        pas[q->word] = p->word;
+        free(q);
+    }
+    pas[m] = p->word;
 }

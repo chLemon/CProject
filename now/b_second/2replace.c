@@ -31,13 +31,26 @@ char *replace(char line[], char res[], char src[], char tar[])
 
 int main(int argc, char const *argv[])
 {
+    FILE *in, *out;
+    in = fopen("filein.txt", "r");
+    out = fopen("fileout.txt", "w");
+    char src[200];
+    char tar[200];
+    scanf("%s", src);
+    scanf("%s", tar);
 
-    char line[] = "#include <stdio.h>";
-    char src[] = "in";
-    char tar[] = "out";
+    char line[205];
     char *res = (char *)malloc(sizeof(char) * 205);
-    // puts(line);
-    res = replace(line, res, src, tar);
-    puts(res);
+
+    while (fgets(line, 200, in) != NULL)
+    {
+        printf("%s\n", line);
+        res = replace(line, res, src, tar);
+        fputs(res, out);
+    }
+
+    fclose(in);
+    fclose(out);
+
     return 0;
 }

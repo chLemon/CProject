@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-#define isin(i) i >= 0 && i <= 18
-
+#define isin(i) (i >= 0 && i <= 18)
+#define alleql(a1, a2, b1, b2, c1, c2, d1, d2) (chess[a1][a2] == chess[b1][b2] && chess[b1][b2] == chess[c1][c2] && chess[c1][c2] == chess[d1][d2])
+#define isempty(i, j) (i >= 0 && i <= 18 && chess[i][j] == 0)
 int judge(int chess[19][19]);
 //设置成全局变量不用传参数
 int chess[19][19];
@@ -32,50 +33,14 @@ int judge(int chess[19][19])
             if (chess[i][j] == 0) //当前格有没有棋子在
                 continue;
             //横着
-            if (i + 4 < 19 &&)
+            if ((isin(i + 4) && alleql(i, j, i + 1, j, i + 2, j, i + 3, j) && (isempty(i - 1, j) || isempty(i + 4, j)))                                        //横着
+                || (isin(j + 4) && alleql(i, j, i, j + 1, i, j + 2, i, j + 3) && (isempty(i, j - 1) || isempty(i, j + 4)))                                     //竖着
+                || (isin(i + 4) && isin(j + 4) && alleql(i, j, i + 1, j + 1, i + 2, j + 2, i + 3, j + 3) && (isempty(i - 1, j - 1) || isempty(i + 4, j + 4)))  //右下斜
+                || (isin(i + 4) && isin(j - 4) && alleql(i, j, i + 1, j - 1, i + 2, j - 2, i + 3, j - 3) && (isempty(i - 1, j + 1) || isempty(i + 4, j - 4)))) //右上斜
             {
-                /* code */
-            }
-
-            win_i = i;
-            win_j = j;
-            return chess[i][j]; //返回当前棋子的颜色
-
-            //竖着
-            for (k = 1; k < 4; k++)
-            {
-                if (i + k > 18 || chess[i][j] != chess[i + k][j])
-                    break;
-                if (k == 4 && ((i > 1 && chess[i - 1][j] == 0) || (chess[i + 4][j] == 0 && i < 15))) //有4个，且有空位
-                {
-                    win_i = i;
-                    win_j = j;
-                    return chess[i][j]; //返回当前棋子的颜色
-                }
-            }
-            //右斜着
-            for (k = 1; k < 4; k++)
-            {
-                if (i + k > 18 || j + k > 18 || chess[i][j] != chess[i + k][j + k])
-                    break;
-                if (k == 4 && ((i > 1 && j > 1 && chess[i - 1][j - 1] == 0) || (chess[i + 4][j + 4] == 0 && i < 15 && j < 15))) //有4个，且有空位
-                {
-                    win_i = i;
-                    win_j = j;
-                    return chess[i][j]; //返回当前棋子的颜色
-                }
-            }
-            //左斜，左下角的棋子为起始位置
-            for (k = 1; k < 4; k++)
-            {
-                if (i - k < 0 || j + k > 18 || chess[i][j] != chess[i - k][j + k])
-                    break;
-                if (k == 4 && ((i < 18 && j > 1 && chess[i + 1][j - 1] == 0) || (chess[i - 4][j + 4] == 0 && i > 1 && j < 15))) //有4个，且有空位
-                {
-                    win_i = i;
-                    win_j = j;
-                    return chess[i][j]; //返回当前棋子的颜色
-                }
+                win_i = i;
+                win_j = j;
+                return chess[i][j]; //返回当前棋子的颜色
             }
         }
     return 0; //全都失败

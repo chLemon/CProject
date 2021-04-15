@@ -1,43 +1,90 @@
 #include <stdio.h>
-#include <ctype.h>
-#include <string.h>
 #include <math.h>
+#include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
+#define MAX (500 + 5)
+#define N (200 + 5)
+int flag[500];
+char pas[500];
 
-char *replace(char line[], char res[], char src[], char tar[])
+struct node
 {
-    int i, j, k = 0, f;
-    for (i = 0, f = 1; i < strlen(line); i++, f = 1)
-    {
-        for (j = 0; j < strlen(src); j++)
-            if (line[i + j] != src[j])
-            {
-                f = 0;
-                break;
-            }
+    char word;
+    struct node *next;
+};
 
-        if (f)
-        {
-            strcpy(res + k, tar);
-            k += strlen(tar);
-            i += strlen(src) - 1;
-        }
+void add();
+
+int main()
+{
+    add();
+
+    FILE *fp, *pp;
+    fp = fopen("in.txt", "r");
+    pp = fopen("in_crpyt.txt", "w");
+
+    char ch;
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        if (ch >= 32 || ch <= 126)
+            fputc(pas[ch], pp);
         else
-            res[k++] = line[i];
+            fputc(ch, pp);
     }
-    res[k] = '\0';
-    return res;
+
+    fclose(fp);
+    fclose(pp);
+    return 0;
 }
 
-int main(int argc, char const *argv[])
+void add()
 {
+    struct node *p, *list, *p0;
+    p = (struct node *)malloc(sizeof(struct node));
+    p->next = NULL;
+    list = p;
+    char op;
+    while ((op = getchar()) != '\n')
+    {
+        if (flag[op] == 0)
+        {
+            p0 = (struct node *)malloc(sizeof(struct node));
+            p0->word = op;
+            p0->next = NULL;
+            p->next = p0;
+            p = p->next;
+            flag[op] = 1;
+        }
+    }
 
-    char line[] = "#include <stdio.h>";
-    char src[] = "in";
-    char tar[] = "out";
-    char *res = (char *)malloc(sizeof(char) * 205);
-    // puts(line);
-    res = replace(line, res, src, tar);
-    puts(res);
-    return 0;
+    int i = 0;
+    for (i = 32; i <= 126; i++)
+    {
+        op = i;
+        if (flag[i] == 0)
+        {
+            p0 = (struct node *)malloc(sizeof(struct node));
+            p0->word = op;
+            p0->next = NULL;
+            p->next = p0;
+            p = p->next;
+        }
+    }
+    p->next = list;
+
+    struct node *q;
+    q = (struct node *)malloc(sizeof(struct node));
+    char m = list->word;
+    for (p = list->next; p != p->next; p = q->next)
+    {
+        list = list->next;
+        q = p;
+        for (i = 0; i < p->word; i++)
+        {
+            q = q->next;
+        }
+        pas[p->word] = q->word;
+    }
+    pas[m] = p->word;
 }

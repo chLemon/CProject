@@ -7,7 +7,7 @@
 #define isempty() top == -1
 #define isfull() top == 205
 #define isbrc(c) c == '(' || c == ')' || c == '{' || c == '}'
-#define printe(c, i) printf("without maching %c at line %d", c, i);
+#define printe(c, i) printf("without maching '%c' at line %d", c, i);
 
 char all[205];
 int ia = -1;
